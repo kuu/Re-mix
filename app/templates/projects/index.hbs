@@ -1,0 +1,9 @@
+<h1>Projects</h1>
+
+<ul>
+{{#each models}}
+  <li>
+    <a href="/projects/{{owner.login}}/{{name}}">{{name}}</a>, by <a href="/users/{{owner.login}}">{{owner.login}}</a>
+  </li>
+{{/each}}
+</ul>
