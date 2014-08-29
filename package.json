@@ -5,9 +5,6 @@
   "author": "Kuu Miyazaki",
   "license": "ISC",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "dependencies": {
     "express": "~3",
     "rendr-handlebars": "0.2.0",
@@ -30,7 +27,17 @@
     "gulp-size": "^0.3.0",
     "gulp-uglify": "^0.2.1",
     "jshint-stylish": "^0.2.0",
-    "opn": "^0.1.1"
+    "opn": "^0.1.1",
+    "gulp-util": "~2.2.14",
+    "gulp-plumber": "~0.5.6",
+    "gulp-wrap": "~0.3.0",
+    "gulp-stylus": "~0.1.0",
+    "gulp-nodemon": "~1.0.2",
+    "glob": "~3.2.9",
+    "browserify": "~3.32.0",
+    "vinyl-source-stream": "~0.1.1",
+    "mocha": "~1.9.0",
+    "chai": "~1.8.1"
   },
   "engines": {
     "node": ">=0.10.0"
