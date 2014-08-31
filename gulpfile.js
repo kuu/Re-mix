@@ -8,7 +8,7 @@ var source = require('vinyl-source-stream');
 // load plugins
 var $ = require('gulp-load-plugins')();
 
-var stylesheetsDir = './assets/stylesheets';
+var STYLESHEETS_DIR = './assets/stylesheets';
 
 // error handling
 var handleError = function (err) {
@@ -23,38 +23,30 @@ var plumber = function () {
 //------------------------------------------------
 // HANDLEBARS
 //------------------------------------------------
-gulp.task('handlebars:compile', function () {
+gulp.task('handlebars', function () {
 
     return gulp.src('./app/templates/**/[!__]*.hbs')
         .pipe(plumber())
         .pipe($.handlebars({ wrapped : true }))
-        .pipe($.wrap('templates["<%= file.relative.replace(/\\\\/g, "/").replace(/.js$/, "") %>"] = <%= file.contents %>;\n'))
+        .pipe($.wrap('templates["<%= file.relative.replace(/\\\\/g, "/").replace(/.js$/, "") %>"] = Handlebars.template(<%= file.contents %>);\n'))
         .pipe($.concat('compiledTemplates.js'))
         .pipe($.wrap('module.exports = function(Handlebars){\ntemplates = {};\n<%= contents %>\nreturn templates \n};'))
         .pipe(gulp.dest('app/templates/'));
-});
-
-gulp.task('handlebars:watch', function () {
-    return gulp.watch('./app/templates/**/*.hbs', [ 'handlebars:compile' ]);
 });
 
 //------------------------------------------------
 // STYLUS
 //------------------------------------------------
 
-gulp.task('stylus:compile', function () {
+gulp.task('stylus', function () {
 
     var opts = { set : [ 'include css' ] };
 
-    return gulp.src(stylesheetsDir + '/index.styl')
+    return gulp.src(STYLESHEETS_DIR + '/index.styl')
         .pipe(plumber())
         .pipe($.stylus(opts))
         .pipe($.concat('styles.css'))
         .pipe(gulp.dest('./public'));
-});
-
-gulp.task('stylus:watch', function () {
-    gulp.watch(stylesheetsDir + '/index.styl', [ 'stylus:compile' ]);
 });
 
 //------------------------------------------------
@@ -70,7 +62,7 @@ var rendrModules = rendrClientFiles.map(function (file) {
 
 var getBundler = function (globs) {
 
-    var bundler, files;
+    var bundler, files, moduleName;
 
     bundler = browserify({
         fullPaths : false,
@@ -97,7 +89,7 @@ var getBundler = function (globs) {
     return bundler;
 };
 
-gulp.task('browserify:app', [ 'handlebars:compile' ], function () {
+gulp.task('browserify', [ 'handlebars' ], function () {
 
     var bundler = getBundler([ 'app/**/*.js' ]),
         options = { insertGlobals : false, debug : true };
@@ -109,33 +101,17 @@ gulp.task('browserify:app', [ 'handlebars:compile' ], function () {
         .pipe(gulp.dest('./public'));
 });
 
-gulp.task('browserify:test', function () {
-
-    var bundler = getBundler([ 'test/app/**/*.js', 'app/**/*.js', 'test/helper.js' ]),
-        options = { insertGlobals : false, debug : true };
-
-    return bundler.bundle(options)
-        .on('error', handleError)
-        .pipe(plumber())
-        .pipe(source('testBundle.js'))
-        .pipe(gulp.dest('./public'));
-});
-
-gulp.task('browserify:watch', function () {
-    gulp.watch('./app/**/*.js', [ 'browserify:app' ])
-});
-
 //------------------------------------------------
 // BUILD
 //------------------------------------------------
 
 gulp.task('clean', function () {
-    return gulp.src(['.tmp', 'dist'], { read: false }).pipe($.clean());
+    return gulp.src(['public/*', 'app/templates/compiledTemplates.js'], { read: false }).pipe($.clean());
 });
 
-gulp.task('build', [ 'handlebars:compile', 'browserify:app',   'browserify:test', 'stylus:compile' ]);
+gulp.task('build', [ 'handlebars', 'browserify',   'stylus' ]);
 
-gulp.task('default', [ 'clean', 'build' ]);
+gulp.task('default', [ 'clean', 'build', 'runNode' ]);
 
 //------------------------------------------------
 // RUN
@@ -149,44 +125,12 @@ gulp.task('runNode', function () {
     });
 });
 
+//------------------------------------------------
+// WATCH
+//------------------------------------------------
 
-//gulp.task('watch',   [ 'handlebars:watch',   'browserify:watch', 'stylus:watch' ]);
-//gulp.task('server',  [ 'compile', 'runNode', 'watch' ]);
-
-gulp.task('connect', function () {
-    var connect = require('connect');
-    var app = connect()
-        .use(require('connect-livereload')({ port: 35729 }))
-        .use(connect.static('app'))
-        .use(connect.static('.tmp'))
-        .use(connect.directory('app'));
-
-    require('http').createServer(app)
-        .listen(9000)
-        .on('listening', function () {
-            console.log('Started connect web server on http://localhost:9000');
-        });
-});
-
-gulp.task('serve', ['connect', 'styles'], function () {
-    require('opn')('http://localhost:9000');
-});
-
-gulp.task('watch', ['connect', 'serve'], function () {
-    var server = $.livereload();
-
-    // watch for changes
-
-    gulp.watch([
-        'app/*.html',
-        '.tmp/styles/**/*.css',
-        'app/scripts/**/*.js',
-        'app/images/**/*'
-    ]).on('change', function (file) {
-        server.changed(file.path);
-    });
-
-    gulp.watch('app/styles/**/*.scss', ['styles']);
-    gulp.watch('app/scripts/**/*.js', ['scripts']);
-    gulp.watch('app/images/**/*', ['images']);
+gulp.task('watch', function () {
+    gulp.watch('app/templates/**/*.hbs', [ 'handlebars' ]);
+    gulp.watch(STYLESHEETS_DIR + '/index.styl', [ 'stylus' ]);
+    gulp.watch('./app/**/*.js', [ 'browserify' ])
 });
