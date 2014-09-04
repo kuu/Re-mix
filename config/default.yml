@@ -11,8 +11,9 @@ appData:
 
 api:
   default:
-    host: api.github.com
-    protocol: https
+    host: localhost
+    port: 3030
+    protocol: http
   travis-ci:
     host: api.travis-ci.org
     protocol: https
