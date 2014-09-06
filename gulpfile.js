@@ -111,7 +111,19 @@ gulp.task('clean', function () {
 
 gulp.task('build', [ 'handlebars', 'browserify',   'stylus' ]);
 
+gulp.task('debug', [ 'clean', 'build', 'runDebugNode' ]);
+
 gulp.task('default', [ 'clean', 'build', 'runNode' ]);
+
+//------------------------------------------------
+// CREATE DATABASE
+//------------------------------------------------
+
+gulp.task('createDB', $.shell.task([
+  'mongo mydb --eval "db.dropDatabase()"',
+  'mongoimport --db mydb --collection users --type json --file data/user_data.json --jsonArray',
+  'mongoimport --db mydb --collection projects --type json --file data/project_data.json --jsonArray'
+]));
 
 //------------------------------------------------
 // RUN
@@ -124,6 +136,10 @@ gulp.task('runNode', function () {
         ignore : [ 'public/', 'gulpfile.js' ]
     });
 });
+
+gulp.task('runDebugNode', $.shell.task([
+  'node-debug index.js'
+]));
 
 //------------------------------------------------
 // WATCH

@@ -9,11 +9,11 @@ server:
 appData:
   someProperty: someValue
 
-api:
-  default:
-    host: localhost
-    port: 3030
-    protocol: http
-  travis-ci:
-    host: api.travis-ci.org
-    protocol: https
+db:
+  host: localhost
+  name: mydb
+  options:
+    server:
+      auto_reconnect: true
+      socketOptions:
+        keepAlive: 1

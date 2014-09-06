@@ -7,7 +7,7 @@ module.exports = Base.extend({
     if (this.params.user != null) {
       return '/users/:user/projects';
     } else {
-      return '/projects';
+      return '/projectList';
     }
   }
 });

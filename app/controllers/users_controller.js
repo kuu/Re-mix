@@ -1,7 +1,9 @@
+var _ = require('underscore');
+
 module.exports = {
   index: function(params, callback) {
     var spec = {
-      collection: {collection: 'Projects', params: params}
+      collection: {collection: 'Users', params: params}
     };
     this.app.fetch(spec, function(err, result) {
       callback(err, result);
@@ -10,8 +12,8 @@ module.exports = {
 
   show: function(params, callback) {
     var spec = {
-      model: {model: 'Project', params: params, ensureKeys: ['language', 'watchers_count']},
-      build: {model: 'Build', params: params}
+      model: {model: 'User', params: params},
+      projects: {collection: 'Projects', params: {user: params.login}}
     };
     this.app.fetch(spec, function(err, result) {
       callback(err, result);

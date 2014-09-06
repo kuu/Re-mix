@@ -1,7 +1,7 @@
 var Base = require('./base');
 
 module.exports = Base.extend({
-  url: '/projects/:user/:project',
+  url: '/projects/:owner/:name',
   idAttribute: 'name'
 });
 module.exports.id = 'Project';
