@@ -20,7 +20,7 @@ module.exports = {
 
   show: function(params, callback) {
     var spec = {
-      model: {model: 'Projects', params: params, ensureKeys: ['language', 'watchers_count']},
+      model: {model: 'Project', params: params, ensureKeys: ['language', 'watchers_count']},
       build: {model: 'Build', params: params}
     };
     this.app.fetch(spec, function(err, result) {
