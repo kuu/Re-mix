@@ -1,7 +1,5 @@
 var db = require('config').db,
     DataAdapter = require('rendr/server/data_adapter'),
-    UserModel = require('./user_dao'),
-    RepositoryModel = require('./project_dao'),
     _ = require('underscore'),
     debug = require('debug')('rendr:MongodbAdapter'),
     util = require('util'),
@@ -16,10 +14,10 @@ module.exports.query = query;
 // Initialize DB connection.
 //
 function initDB() {
-  var uri = 'mongodb://' + (db.user && db.password ? db.user + ':' +
-            db.password + '@' : '')
-            + db.host + (db.port ? ':' + db.port : '')
-            + '/' + db.name;
+  var uri = 'mongodb://'
+    + (db.user && db.password ? db.user + ':' + db.password + '@' : '')
+    + db.host + (db.port ? ':' + db.port : '')
+    + '/' + db.name;
 
   mongoose.connect(uri, db.options);
 
@@ -41,7 +39,7 @@ function MongodbAdapter(options) {
   DataAdapter.call(this, options);
 
   if (!options.mapper) {
-    throw "mapper must be defined";
+    throw 'mapper must be defined';
   }
 
   this.mapper = options.mapper;

@@ -5,7 +5,7 @@
 module.exports = function(Handlebars) {
   return {
     copyright: function(year) {
-      return new Handlebars.SafeString("&copy;" + year);
+      return new Handlebars.SafeString('&copy;' + year);
     }
   };
 };

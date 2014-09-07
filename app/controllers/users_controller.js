@@ -1,5 +1,3 @@
-var _ = require('underscore');
-
 module.exports = {
   index: function(params, callback) {
     var spec = {
@@ -13,7 +11,7 @@ module.exports = {
   show: function(params, callback) {
     var spec = {
       model: {model: 'User', params: params},
-      projects: {collection: 'Projects', params: {user: params.login}}
+      projects: {collection: 'Projects', params: {user: params.id}}
     };
     this.app.fetch(spec, function(err, result) {
       callback(err, result);

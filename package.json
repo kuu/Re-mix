@@ -35,7 +35,10 @@
     "vinyl-source-stream": "~0.1.1",
     "jshint-stylish": "^0.2.0",
     "gulp-shell": "^0.2.9",
-    "gulp-jsonlint": "^0.1.0"
+    "gulp-jsonlint": "^0.1.0",
+    "gulp-cache": "^0.2.2",
+    "gulp-imagemin": "^1.0.1",
+    "gulp-run-sequence": "^0.3.2"
   },
   "engines": {
     "node": ">=0.8"

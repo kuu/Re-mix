@@ -1,41 +1,49 @@
 var UserModel = require('./user_dao'),
     ProjectModel = require('./project_dao'),
+    TrackModel = require('./track_dao'),
     get = require('./mongodb_adapter').get,
     query = require('./mongodb_adapter').query;
 
 // map path to db query, model, & criteria
 module.exports = function (path, callback) {
   var err,
-      a = path.split("/");
+      a = path.split('/');
 
   switch (a[1]) {
-    case "projectList":
+    case 'projectList':
       callback(err, query, ProjectModel, {});
       return;
 
-    case "users":
-      if (a.length == 2) {
+    case 'users':
+      if (a.length === 2) {
         callback(err, query, UserModel, {});
         return;
       }
-      else if (a.length == 3) {
-        callback(err, get, UserModel, { "login": a[2] });
+      else if (a.length === 3) {
+        callback(err, get, UserModel, { 'id': a[2] });
         return;
       }
-      else if (a.length == 4 && a[3] === "projects") {
-        callback(err, query, ProjectModel, { "owner.login": a[2] });
+      else if (a.length === 4 && a[3] === 'projects') {
+        callback(err, query, ProjectModel, { 'owner': a[2] });
         return;
       }
       break;
 
-    case "projects":
-      if (a.length == 4) {
-        callback(err, get, ProjectModel, { "owner.login": a[2], "name": a[3] });
+    case 'projects':
+      if (a.length === 4) {
+        callback(err, get, ProjectModel, { 'owner': a[2], 'id': a[3] });
+        return;
+      }
+      break;
+
+    case 'tracks':
+      if (a.length === 3) {
+        callback(err, get, TrackModel, { 'owner.login': a[2], 'name': a[3] });
         return;
       }
       break;
   }
-  err = new Error("Cannot map " + path + " to db query");
+  err = new Error('Cannot map ' + path + ' to db query');
   err.status = 500;
   err.body = path;
   callback(err);

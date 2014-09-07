@@ -101,6 +101,10 @@ gulp.task('browserify', [ 'handlebars' ], function () {
         .pipe(gulp.dest('./public'));
 });
 
+//------------------------------------------------
+// CODE VALIDATOR
+//------------------------------------------------
+
 gulp.task('jsonlint', function () {
     gulp.src("./data/**/*.json")
         .pipe($.jsonlint())
@@ -117,18 +121,43 @@ gulp.task('jshint', function () {
 gulp.task('lint', [ 'jsonlint', 'jshint' ]);
 
 //------------------------------------------------
+// IMAGES
+//------------------------------------------------
+
+gulp.task('images', function () {
+    return gulp.src('assets/images/**/*')
+        //.pipe($.cache($.imagemin({
+        .pipe($.imagemin({
+            optimizationLevel: 3,
+            progressive: true,
+            interlaced: true
+        }))
+        .pipe(gulp.dest('public/assets/images'))
+        .pipe($.size());
+});
+
+//------------------------------------------------
 // BUILD
 //------------------------------------------------
 
 gulp.task('clean', function () {
-    return gulp.src(['public/*', 'app/templates/compiledTemplates.js'], { read: false }).pipe($.clean());
+    return gulp.src(['public/*', '.tmp', 'app/templates/compiledTemplates.js'], { read: false }).pipe($.clean());
 });
 
-gulp.task('build', [ 'lint', 'handlebars', 'browserify',   'stylus' ]);
+gulp.task('compile', function () {
+    $.runSequence(['lint', 'handlebars', 'browserify']);
+});
 
-gulp.task('debug', [ 'clean', 'build', 'runDebugNode' ]);
+gulp.task('build', [ 'compile', 'stylus', 'images' ]);
 
-gulp.task('default', [ 'clean', 'build', 'runNode' ]);
+gulp.task('debug', function () {
+    $.runSequence('clean', 'build', 'runDebugNode');
+});
+
+gulp.task('default', function () {
+    $.runSequence('clean', 'build', 'runNode');
+});
+
 
 //------------------------------------------------
 // CREATE DATABASE

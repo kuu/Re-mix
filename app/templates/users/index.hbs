@@ -3,7 +3,9 @@
 <ul>
 {{#each models}}
   <li>
-    <a href="/users/{{login}}">{{login}}</a>
+    <a href="/users/{{id}}"><img src="{{avatar}}" width=60 height=60></img></a>
+    <a href="/users/{{id}}">{{id}}</a>
+    <a href="/users/{{id}}"><h4>{{name}}</h4></a>
   </li>
 {{/each}}
 </ul>
