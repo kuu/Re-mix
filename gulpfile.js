@@ -137,7 +137,8 @@ gulp.task('default', [ 'clean', 'build', 'runNode' ]);
 gulp.task('createDB', $.shell.task([
   'mongo mydb --eval "db.dropDatabase()"',
   'mongoimport --db mydb --collection users --type json --file data/user_data.json --jsonArray',
-  'mongoimport --db mydb --collection projects --type json --file data/project_data.json --jsonArray'
+  'mongoimport --db mydb --collection projects --type json --file data/project_data.json --jsonArray',
+  'mongoimport --db mydb --collection tracks --type json --file data/track_data.json --jsonArray'
 ]));
 
 //------------------------------------------------
