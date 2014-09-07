@@ -101,6 +101,21 @@ gulp.task('browserify', [ 'handlebars' ], function () {
         .pipe(gulp.dest('./public'));
 });
 
+gulp.task('jsonlint', function () {
+    gulp.src("./data/**/*.json")
+        .pipe($.jsonlint())
+        .pipe($.jsonlint.reporter());
+});
+
+gulp.task('jshint', function () {
+    return gulp.src(['app/**/[!compiled]*.js', 'data/**/*.js'])
+        .pipe($.jshint('.jshintrc'))
+        .pipe($.jshint.reporter('default'))
+        .pipe($.size());
+});
+
+gulp.task('lint', [ 'jsonlint', 'jshint' ]);
+
 //------------------------------------------------
 // BUILD
 //------------------------------------------------
@@ -109,7 +124,7 @@ gulp.task('clean', function () {
     return gulp.src(['public/*', 'app/templates/compiledTemplates.js'], { read: false }).pipe($.clean());
 });
 
-gulp.task('build', [ 'handlebars', 'browserify',   'stylus' ]);
+gulp.task('build', [ 'lint', 'handlebars', 'browserify',   'stylus' ]);
 
 gulp.task('debug', [ 'clean', 'build', 'runDebugNode' ]);
 
