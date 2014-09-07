@@ -2,6 +2,7 @@ var express = require('express'),
     rendr = require('rendr'),
     config = require('config'),
     app = express(),
+    mw = require('./server/middleware'),
     mongo = require('./data/mongodb_adapter'),
     dbMapper = require('./data/db_mapper');
 
@@ -12,6 +13,24 @@ app.use(express.compress());
 app.use(express.static(__dirname + '/public'));
 app.use(express.logger());
 app.use(express.bodyParser());
+
+/**
+ * The `cookieParser` middleware is required for sessions.
+ */
+app.use(express.cookieParser());
+
+/**
+ * Add session support. This will populate `req.session`.
+ */
+app.use(express.session({
+  secret: config.session.secret,
+
+  /**
+   * In production apps, you should probably use something like Redis or Memcached
+   * to store sessions. Look at the `connect-redis` or `connect-memcached` modules.
+   */
+  store: null
+}));
 
 /**
  * For more control over the fetching of data, we pass our own
@@ -36,6 +55,24 @@ var server = rendr.createServer({
   *     app.use('/my_cool_app', server);
   */
 app.use(server);
+
+server.configure(function(rendrExpressApp) {
+
+  /**
+   * Allow the Rendr app to access session data on client and server.
+   * Check out the source in the file `./server/middleware/initSession.js`.
+   */
+  rendrExpressApp.use(mw.initSession());
+
+  /**
+   * Increment a counter in the session on every page hit.
+   */
+  rendrExpressApp.use(mw.incrementCounter());
+  rendrExpressApp.use(function (req, res, next) {
+    req.updateSession('user', 'kuu');
+    next();
+  });
+});
 
 /**
  * Start the Express server.

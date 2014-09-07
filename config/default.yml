@@ -17,3 +17,6 @@ db:
       auto_reconnect: true
       socketOptions:
         keepAlive: 1
+
+session:
+  secret: 1-9-6-306yoyogishibuyakutokyojapan

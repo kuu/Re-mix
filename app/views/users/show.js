@@ -6,6 +6,7 @@ module.exports = BaseView.extend({
   getTemplateData: function() {
     var data = BaseView.prototype.getTemplateData.call(this);
     data.projects = this.options.projects;
+    data.self = (this.app.get('session').user === this.model.id);
     return data;
   }
 });
