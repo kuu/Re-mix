@@ -2,4 +2,12 @@
 <p>Re:mix is a recording platform for sharing media data.</p>
 <p>Check out <a href="/projects">Projects</a> or <a href="/users">Users</a>.</p>
 
+{{#unless loggedIn}}
+<form method="POST" action="/login">
+  <label>ID:<input type="text" size="12" maxlength="12" name="username"></label>
+  <label>PW:<input type="password" size="12" maxlength="12" name="passowrd"></label>
+  <input type="submit" value="Login"></label>
+</form>
+{{/unless}}
+
 <p>{{copyright "2014"}}</p>

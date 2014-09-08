@@ -69,7 +69,6 @@ server.configure(function(rendrExpressApp) {
    */
   rendrExpressApp.use(mw.incrementCounter());
   rendrExpressApp.use(function (req, res, next) {
-    req.updateSession('user', 'kuu');
     next();
   });
 });
@@ -96,5 +95,12 @@ if (require.main === module) {
   mongo.initDB();
   start();
 }
+
+// Dummy login (everybody can log in.)
+app.post('/login', function (req, res) {
+  req.updateSession('user', req.param('username'));
+  res.redirect('/');
+});
+
 
 exports.app = app;
