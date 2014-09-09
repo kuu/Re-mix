@@ -7,15 +7,15 @@ module.exports = function(Handlebars) {
     copyright: function(year) {
       return new Handlebars.SafeString('&copy;' + year);
     },
-    math: function(lvalue, operator, rvalue, options) {
+    math: function(lvalue, operator, rvalue) {
       lvalue = parseFloat(lvalue);
       rvalue = parseFloat(rvalue);
       return {
-        "+": lvalue + rvalue,
-        "-": lvalue - rvalue,
-        "*": lvalue * rvalue,
-        "/": lvalue / rvalue,
-        "%": lvalue % rvalue
+        '+': lvalue + rvalue,
+        '-': lvalue - rvalue,
+        '*': lvalue * rvalue,
+        '/': lvalue / rvalue,
+        '%': lvalue % rvalue
       }[operator];
     }
   };
