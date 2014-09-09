@@ -155,7 +155,7 @@ gulp.task('debug', function () {
 });
 
 gulp.task('default', function () {
-    $.runSequence('clean', 'build', 'runNode');
+    $.runSequence('clean', 'build', 'runNode', 'watch');
 });
 
 
@@ -193,5 +193,7 @@ gulp.task('runDebugNode', $.shell.task([
 gulp.task('watch', function () {
     gulp.watch('app/templates/**/*.hbs', [ 'handlebars' ]);
     gulp.watch(STYLESHEETS_DIR + '/index.styl', [ 'stylus' ]);
-    gulp.watch('./app/**/*.js', [ 'browserify' ])
+    gulp.watch('./app/**/*.js', [ 'jshint', 'browserify' ]);
+    gulp.watch('./data/**/*.json', [ 'jsonlint', 'createDB' ]);
+    gulp.watch('./assets/images/**/*', [ 'images' ]);
 });
