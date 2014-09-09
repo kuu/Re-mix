@@ -9,6 +9,12 @@ body
     .loading-indicator
       display: block
 
+.hidden
+  visibility: hidden
+
+.none
+  display: none
+
 .loading-indicator
   display: none
   float: right
@@ -26,3 +32,18 @@ body
   flex-basis: 33%
   list-style: none
   margin-top: 20px
+
+.projects_show_view > div
+  float: left
+
+.projects_show_view .background
+  position: absolute
+  z-index: 100
+
+.projects_show_view .foreground
+  position: absolute
+  z-index: 200
+  opacity: 0.6
+
+.projects_show_view .foreground:hover
+  opacity: 1.0
