@@ -5,12 +5,16 @@
 </div>
 <div class="project-descriptions">
   <h3>{{name}}</h3>
-  <div>by <a href="/users/{{owner}}">{{owner}}</a></div>
+  <h4>Owner:</h4>
+  <div><a href="/users/{{owner}}">{{owner}}</a></div>
   {{#if origin.user}}
-  <div>forked from <a href="/projects/{{origin.user}}/{{origin.proj}}">{{origin.user}}</a></div>
+  <h4>Forked from:</h4>
+  <div><a href="/projects/{{origin.user}}/{{origin.proj}}">{{origin.user}}</a></div>
   {{/if}}
-   <div><label>Description: <p>{{description}}</p></label></div>
-   <div><label>Star: <p>{{starred.length}}</p></label></div>
+  <h4>Description:</h4>
+  <p>{{description}}</p>
+  <h4>Star:</h4>
+  <div>{{starred.length}}</div>
 </div>
 <div class="tracks">
     <h3>Tracks</h3>

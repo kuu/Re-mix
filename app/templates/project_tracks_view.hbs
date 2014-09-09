@@ -12,12 +12,12 @@
   <tbody>
   {{#each tracks}}
     <tr>
-      {{#if self}}<td><input type="checkbox" id="nonInteractive" checked="{{enabled}}"></td>{{/if}}
+      {{#if ../self}}<td><input type="checkbox" id="nonInteractive" checked="{{enabled}}"></td>{{/if}}
       <td><button id="play-{{@index}}">Play</button></td>
       <td>{{math @index "+" 1}}</td>
       <td>{{label}}</td>
       <td>{{owner}}</td>
-      {{#if self}}<td><button id="delete-{{@index}}">Delete</button></td>{{/if}}
+      {{#if ../self}}<td><button id="delete-{{@index}}">Delete</button></td>{{/if}}
     </tr>
   {{/each}}
   </tbody>
