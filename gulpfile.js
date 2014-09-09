@@ -137,6 +137,16 @@ gulp.task('images', function () {
 });
 
 //------------------------------------------------
+// MEDIA
+//------------------------------------------------
+
+gulp.task('media', function () {
+    return gulp.src('assets/media/**/*')
+        .pipe(gulp.dest('public/assets/media'))
+        .pipe($.size());
+});
+
+//------------------------------------------------
 // BUILD
 //------------------------------------------------
 
@@ -148,7 +158,7 @@ gulp.task('compile', function () {
     $.runSequence(['lint', 'handlebars', 'browserify']);
 });
 
-gulp.task('build', [ 'compile', 'stylus', 'images' ]);
+gulp.task('build', [ 'compile', 'stylus', 'images', 'media' ]);
 
 gulp.task('debug', function () {
     $.runSequence('clean', 'build', 'runDebugNode');
@@ -169,6 +179,10 @@ gulp.task('createDB', $.shell.task([
   'mongoimport --db mydb --collection projects --type json --file data/project_data.json --jsonArray',
   'mongoimport --db mydb --collection tracks --type json --file data/track_data.json --jsonArray'
 ]));
+
+gulp.task('db', function () {
+    $.runSequence('jsonlint', 'createDB');
+});
 
 //------------------------------------------------
 // RUN
@@ -194,6 +208,7 @@ gulp.task('watch', function () {
     gulp.watch('app/templates/**/*.hbs', [ 'handlebars' ]);
     gulp.watch(STYLESHEETS_DIR + '/index.styl', [ 'stylus' ]);
     gulp.watch('./app/**/*.js', [ 'jshint', 'browserify' ]);
-    gulp.watch('./data/**/*.json', [ 'jsonlint', 'createDB' ]);
+    gulp.watch('./data/**/*.json', [ 'db' ]);
     gulp.watch('./assets/images/**/*', [ 'images' ]);
+    gulp.watch('./assets/media/**/*', [ 'media' ]);
 });

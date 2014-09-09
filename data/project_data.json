@@ -16,20 +16,23 @@
   "tracks" : [
     {
       "id": "2014010112103301",
+      "type": "wav",
       "owner": "defunkt",
-      "label": "Drums",
+      "label": "Bongos",
       "enabled": true
     },
     {
       "id": "2014010112153301",
+      "type": "wav",
       "owner": "defunkt",
-      "label": "Base",
+      "label": "Wobble Bass",
       "enabled": true
     },
     {
       "id": "2014010112203301",
+      "type": "wav",
       "owner": "defunkt",
-      "label": "Guitar-1",
+      "label": "Soprano Sax",
       "enabled": true
     }
   ],
@@ -52,6 +55,7 @@
   "tracks" : [
     {
       "id": "2014010112203301",
+      "type": "wav",
       "owner": "kuu",
       "label": "Drums",
       "enabled": true
@@ -76,6 +80,7 @@
   "tracks" : [
     {
       "id": "2014010112203301",
+      "type": "wav",
       "owner": "mojombo",
       "label": "Drums",
       "enabled": true
@@ -100,6 +105,7 @@
   "tracks" : [
     {
       "id": "2014010112203301",
+      "type": "wav",
       "owner": "mojombo",
       "enabled": true
     }

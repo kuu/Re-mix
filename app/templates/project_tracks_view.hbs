@@ -13,7 +13,7 @@
   {{#each tracks}}
     <tr>
       {{#if ../self}}<td><input type="checkbox" id="nonInteractive" checked="{{enabled}}"></td>{{/if}}
-      <td><button id="play-{{@index}}">Play</button></td>
+      <td><button data-url="{{url}}">Play</button></td>
       <td>{{math @index "+" 1}}</td>
       <td>{{label}}</td>
       <td>{{owner}}</td>

@@ -17,6 +17,7 @@ var schema = new mongoose.Schema({
   tracks: [
     {
       id: { type: String }, // track-id
+      type: { type: String }, // file extension
       owner: { type: String }, // user-id
       label: { type: String },
       enabled: { type: Boolean }

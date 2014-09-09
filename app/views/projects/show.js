@@ -21,6 +21,58 @@ module.exports = BaseView.extend({
       data.youForked = youForked;
     }
     return data;
+  },
+
+  events: {
+    'click .cover-art' : 'onPlayButtonClick'
+  },
+
+  initialize: function () {
+    this.audio = null;
+  },
+
+  onPlayButtonClick: function () {
+    var tPlayButton = document.getElementById('play');
+    var tPauseButton = document.getElementById('pause');
+    var tAttrs = this.model.attributes;
+    var tAudioElem = this.audio, tUrl;
+
+    if (tPlayButton.classList.contains('none')) {
+      // Pause
+      if (tAudioElem) {
+        tAudioElem.pause();
+      }
+      tPlayButton.classList.remove('none');
+      tPauseButton.classList.add('none');
+    } else {
+      // Play
+      if (tAudioElem) {
+        tAudioElem.play();
+        tPlayButton.classList.add('none');
+        tPauseButton.classList.remove('none');
+      } else {
+        tUrl = '/assets/media/projects/' + tAttrs.owner + '/' + tAttrs.id + '.mp3';
+        tAudioElem = this.audio = new Audio(tUrl);
+
+        tAudioElem.addEventListener('canplay', function () {
+          tAudioElem.play();
+          tPlayButton.classList.add('none');
+          tPauseButton.classList.remove('none');
+        }, false);
+
+        tAudioElem.addEventListener('ended', function () {
+          tPlayButton.classList.remove('none');
+          tPauseButton.classList.add('none');
+        }, false);
+
+        tAudioElem.addEventListener('error', function () {
+          tPlayButton.classList.remove('none');
+          tPauseButton.classList.add('none');
+        }, false);
+      }
+    }
+
   }
+
 });
 module.exports.id = 'projects/show';
