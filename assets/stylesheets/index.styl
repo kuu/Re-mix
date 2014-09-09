@@ -33,8 +33,14 @@ body
   list-style: none
   margin-top: 20px
 
-.projects_show_view > div
-  float: left
+.projects_show_view
+  display: flex
+
+.projects_show_view > .cover-art
+  flex-basis: 25%
+
+.projects_show_view > .project-descriptions
+  flex-basis: 75%
 
 .projects_show_view .background
   position: absolute
