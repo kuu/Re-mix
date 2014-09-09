@@ -1,13 +1,19 @@
+{{#if loggedIn}}
+<h1>Welcome {{id}}!</h1>
+<h2>Your recent projects:</h2>
+  <div class="span6">
+    {{view "user_projects_view" collection=projects}}
+  </div>
+{{else}}
 <h1>Welcome to Re:mix!</h1>
 <p>Re:mix is a recording platform for sharing media data.</p>
 <p>Check out <a href="/projects">Projects</a> or <a href="/users">Users</a>.</p>
 
-{{#unless loggedIn}}
 <form method="POST" action="/login">
   <label>ID:<input type="text" size="12" maxlength="12" name="username"></label>
   <label>PW:<input type="password" size="12" maxlength="12" name="passowrd"></label>
   <input type="submit" value="Login"></label>
 </form>
-{{/unless}}
+{{/if}}
 
 <p>{{copyright "2014"}}</p>

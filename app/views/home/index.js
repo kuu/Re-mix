@@ -5,7 +5,11 @@ module.exports = BaseView.extend({
 
   getTemplateData: function() {
     var data = BaseView.prototype.getTemplateData.call(this);
-    data.loggedIn = (this.app.get('session').user !== void 0);
+    var loggedIn = (this.app.get('session').user !== void 0);
+    data.loggedIn = loggedIn;
+    if (loggedIn) {
+      data.projects = this.options.projects;
+    }
     return data;
   }
 });
