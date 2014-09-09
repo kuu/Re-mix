@@ -6,6 +6,17 @@ module.exports = function(Handlebars) {
   return {
     copyright: function(year) {
       return new Handlebars.SafeString('&copy;' + year);
+    },
+    math: function(lvalue, operator, rvalue, options) {
+      lvalue = parseFloat(lvalue);
+      rvalue = parseFloat(rvalue);
+      return {
+        "+": lvalue + rvalue,
+        "-": lvalue - rvalue,
+        "*": lvalue * rvalue,
+        "/": lvalue / rvalue,
+        "%": lvalue % rvalue
+      }[operator];
     }
   };
 };

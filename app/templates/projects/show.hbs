@@ -12,3 +12,20 @@
    <div><label>Description: <p>{{description}}</p></label></div>
    <div><label>Star: <p>{{starred.length}}</p></label></div>
 </div>
+<div class="tracks">
+    <h3>Tracks</h3>
+    {{view "project_tracks_view" tracks=tracks self=self}}
+    <div class="fork-button">
+    {{#if loggedIn}}
+      {{#if self}}
+        <button>Add new track!</button>
+      {{else}}
+        {{#if youForked}}
+          <button disabled>You already forked this project</button>
+        {{else}}
+          <button>Fork this project!</button>
+        {{/if}}
+      {{/if}}
+    {{/if}}
+    </div>
+</div>

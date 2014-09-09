@@ -25,7 +25,6 @@ body
 .users_index_view ul
   display: flex
   flex-wrap: wrap
-  width: 100%
 
 .projects_index_view ul > li
 .users_index_view ul > li
@@ -35,12 +34,16 @@ body
 
 .projects_show_view
   display: flex
+  flex-wrap: wrap
 
 .projects_show_view > .cover-art
   flex-basis: 25%
 
 .projects_show_view > .project-descriptions
   flex-basis: 75%
+
+.projects_show_view > .tracks
+  flex-basis: 100%
 
 .projects_show_view .background
   position: absolute
@@ -53,3 +56,11 @@ body
 
 .projects_show_view .foreground:hover
   opacity: 1.0
+
+.fork-button button
+  width: 70%
+  color: white
+  background: forestgreen
+
+.fork-button button:disabled
+  background: darkslategray

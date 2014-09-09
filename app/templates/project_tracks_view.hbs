@@ -1,0 +1,24 @@
+<table class="tracks-table table">
+  <thead>
+    <tr>
+      {{#if self}}<th></th>{{/if}}
+      <th></th>
+      <th>#</th>
+      <th>Name</th>
+      <th>Owner</th>
+      {{#if self}}<th></th>{{/if}}
+    </tr>
+  </thead>
+  <tbody>
+  {{#each tracks}}
+    <tr>
+      {{#if self}}<td><input type="checkbox" id="nonInteractive" checked="{{enabled}}"></td>{{/if}}
+      <td><button id="play-{{@index}}">Play</button></td>
+      <td>{{math @index "+" 1}}</td>
+      <td>{{label}}</td>
+      <td>{{owner}}</td>
+      {{#if self}}<td><button id="delete-{{@index}}">Delete</button></td>{{/if}}
+    </tr>
+  {{/each}}
+  </tbody>
+</table>
