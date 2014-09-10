@@ -102,5 +102,20 @@ app.post('/login', function (req, res) {
   res.redirect('/');
 });
 
+app.post('/fork', function (req, res) {
+  var originOwner = req.param('originOwner');
+  var originId = req.param('originId');
+  var forkedBy = req.param('forkedBy');
+  var param = {
+    originOwner: originOwner,
+    originId: originId,
+    forkedBy: forkedBy
+  };
+  dbAdapter.request(req, {path: '/fork'},  param, function (err) {
+    if (!err) {
+      res.redirect('/projects/' + forkedBy + '/' + originId + '-from-' + originOwner);
+    }
+  });
+});
 
 exports.app = app;

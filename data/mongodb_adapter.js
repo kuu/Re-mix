@@ -8,6 +8,7 @@ var db = require('config').db,
 module.exports.initDB = initDB;
 module.exports.MongodbAdapter = MongodbAdapter;
 module.exports.get = get;
+module.exports.fork = fork;
 module.exports.query = query;
 
 //
@@ -75,7 +76,7 @@ MongodbAdapter.prototype.request = function(req, api, options, callback) {
     options = {};
   }
 
-  this.mapper(api.path, function (err, f, model, criteria) {
+  this.mapper(api.path, options, function (err, f, model, criteria) {
     if (err) {
       return callback(err);
     }
@@ -101,18 +102,47 @@ MongodbAdapter.prototype.request = function(req, api, options, callback) {
 //
 // Find one document matching criteria.
 //
-function get(model, criteria, callback) {
-  model.findOne(criteria).exec(function(err, body) {
+function get(Model, criteria, callback) {
+  Model.findOne(criteria).exec(function(err, body) {
     callback(err, body);
   });
 }
 
+function fork(Project, criteria, callback) {
+  Project.findOne({id: criteria.originId, owner: criteria.originOwner}).exec(function(err, body) {
+    if (err) {
+      callback(err);
+    } else {
+      var originId = criteria.originId;
+      var originOwner = criteria.originOwner;
+      var newId = criteria.originId + '-from-' + criteria.originOwner;
+      var newOwner = criteria.forkedBy;
+      var doc = new Project({
+        id: newId,
+        name: body.name,
+        type: body.type,
+        owner: newOwner,
+        organization: null,
+        origin: {user: originOwner, proj: originId},
+        description : body.description += ('(the project forked from ' + originOwner + '.)'),
+        tags: body.tags,
+        forks: [],
+        starred: [],
+        tracks: body.tracks,
+        contributors: body.contributors
+      });
+      doc.save(function (err) {
+        callback(err);
+      });
+    }
+  });
+}
 //
 // Query documents by criteria.
 // Query all documents if criteria is empty.
 //
-function query(model, criteria, callback) {
-  model.find(criteria).exec(function(err, body) {
+function query(Model, criteria, callback) {
+  Model.find(criteria).exec(function(err, body) {
     callback(err, body);
   });
 }

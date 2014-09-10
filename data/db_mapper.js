@@ -2,10 +2,11 @@ var UserModel = require('./user_dao'),
     ProjectModel = require('./project_dao'),
     TrackModel = require('./track_dao'),
     get = require('./mongodb_adapter').get,
+    fork = require('./mongodb_adapter').fork,
     query = require('./mongodb_adapter').query;
 
 // map path to db query, model, & criteria
-module.exports = function (path, callback) {
+module.exports = function (path, options, callback) {
   var err,
       a = path.split('/');
 
@@ -39,6 +40,13 @@ module.exports = function (path, callback) {
     case 'tracks':
       if (a.length === 3) {
         callback(err, get, TrackModel, { 'owner.login': a[2], 'name': a[3] });
+        return;
+      }
+      break;
+
+    case 'fork':
+      if (a.length === 2) {
+        callback(err, fork, ProjectModel, options);
         return;
       }
       break;
