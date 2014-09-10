@@ -22,12 +22,12 @@
     <div class="fork-button">
     {{#if loggedIn}}
       {{#if self}}
-        <button id="add-new-track">Add new track!</button>
+        <button>Add new track!</button>
       {{else}}
         {{#if youForked}}
           <button disabled>You already forked this project</button>
         {{else}}
-          <a href="/fork/{{owner}}/{{id}}/{{you}}"><button>Fork this project!</button></a>
+          <button>Fork this project!</button>
         {{/if}}
       {{/if}}
     {{/if}}
