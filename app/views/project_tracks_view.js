@@ -19,7 +19,8 @@ module.exports = BaseView.extend({
   },
 
   events: {
-    'click button' : 'onPlayButtonClick'
+    'click .track-play' : 'onPlayButtonClick',
+    'click .track-delete' : 'onDeleteButtonClick'
   },
 
   initialize: function () {
@@ -27,6 +28,24 @@ module.exports = BaseView.extend({
     this.STATE_STOPPED = 0;
     this.STATE_PLAYING = 1;
     this.STATE_PAUSED = 2;
+  },
+
+  onDeleteButtonClick: function (e) {
+    var view = this.parentView,
+        attrs = view.model.attributes,
+        router = this.app.router,
+        owner = attrs.owner,
+        projId = attrs.id,
+        trackId = parseInt(e.target.id.substring(7));
+
+    $.post('/removeTrackFromProject', {
+      owner: owner,
+      id: projId,
+      track: trackId
+    }, function () {
+      attrs.tracks.splice(trackId, 1);
+      view.render();
+    });
   },
 
   onPlayButtonClick: function (e) {

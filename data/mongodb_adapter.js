@@ -10,6 +10,7 @@ module.exports.initDB = initDB;
 module.exports.MongodbAdapter = MongodbAdapter;
 module.exports.get = get;
 module.exports.fork = fork;
+module.exports.removeTrackFromProject = removeTrackFromProject;
 module.exports.query = query;
 
 //
@@ -106,6 +107,15 @@ MongodbAdapter.prototype.request = function(req, api, options, callback) {
 function get(Model, criteria, callback) {
   Model.findOne(criteria).exec(function(err, body) {
     callback(err, body);
+  });
+}
+
+function removeTrackFromProject(Project, criteria, callback) {
+  Project.findOne({id: criteria.id, owner: criteria.owner}).exec(function(err, doc) {
+    doc.tracks.splice(criteria.track, 1);
+    doc.save(function (err) {
+      callback(err);
+    });
   });
 }
 

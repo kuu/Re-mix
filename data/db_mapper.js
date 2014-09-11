@@ -3,6 +3,7 @@ var UserModel = require('./user_dao'),
     TrackModel = require('./track_dao'),
     get = require('./mongodb_adapter').get,
     fork = require('./mongodb_adapter').fork,
+    removeTrackFromProject = require('./mongodb_adapter').removeTrackFromProject,
     query = require('./mongodb_adapter').query;
 
 // map path to db query, model, & criteria
@@ -47,6 +48,13 @@ module.exports = function (path, options, callback) {
     case 'fork':
       if (a.length === 2) {
         callback(err, fork, ProjectModel, options);
+        return;
+      }
+      break;
+
+    case 'removeTrackFromProject':
+      if (a.length === 2) {
+        callback(err, removeTrackFromProject, ProjectModel, options);
         return;
       }
       break;

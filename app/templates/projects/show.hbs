@@ -18,7 +18,7 @@
 </div>
 <div class="tracks">
     <h3>Tracks</h3>
-    {{view "project_tracks_view" tracks=tracks self=self}}
+    {{view "project_tracks_view" owner=owner id=id tracks=tracks self=self}}
     <div class="fork-button">
     {{#if loggedIn}}
       {{#if self}}

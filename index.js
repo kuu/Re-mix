@@ -118,4 +118,20 @@ app.post('/fork', function (req, res) {
   });
 });
 
+app.post('/removeTrackFromProject', function (req, res) {
+  var owner = req.param('owner');
+  var id = req.param('id');
+  var track = req.param('track');
+  var param = {
+    owner: owner,
+    id: id,
+    track: track
+  };
+  dbAdapter.request(req, {path: '/removeTrackFromProject'},  param, function (err) {
+    if (!err) {
+      res.redirect('/projects/' + owner + '/' + id);
+    }
+  });
+});
+
 exports.app = app;
