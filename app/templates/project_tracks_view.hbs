@@ -6,7 +6,7 @@
       <th>#</th>
       <th>Name</th>
       <th>Owner</th>
-      {{#if self}}<th></th>{{/if}}
+      {{#if self}}{{#unless ../record}}<th></th>{{/unless}}{{/if}}
     </tr>
   </thead>
   <tbody>
@@ -17,7 +17,7 @@
       <td>{{math @index "+" 1}}</td>
       <td>{{label}}</td>
       <td>{{owner}}</td>
-      {{#if ../self}}<td><button id="delete-{{@index}}">Delete</button></td>{{/if}}
+      {{#if ../self}}{{#unless ../../record}}<td><button id="delete-{{@index}}">Delete</button></td>{{/unless}}{{/if}}
     </tr>
   {{/each}}
   </tbody>

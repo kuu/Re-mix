@@ -49,6 +49,10 @@ module.exports = BaseView.extend({
   },
 
   onAddNewTrack: function () {
+    var attrs = this.model.attributes,
+        url = '/record/' + attrs.owner + '/' + attrs.id;
+
+    this.app.router.navigate(url, {trigger: true});
   },
 
   initialize: function () {

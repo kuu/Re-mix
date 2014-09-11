@@ -1,0 +1,24 @@
+<div class="cover-art">
+  <div><img src="/assets/images/projects/{{owner}}/{{id}}-l.png" width=200 height=200></img></div>
+</div>
+<div class="project-descriptions">
+  <h3>{{name}}</h3>
+  <h4>Owner:</h4>
+  <div><a href="/users/{{owner}}">{{owner}}</a></div>
+  {{#if origin.user}}
+  <h4>Forked from:</h4>
+  <div><a href="/projects/{{origin.user}}/{{origin.proj}}">{{origin.user}}</a></div>
+  {{/if}}
+  <h4>Description:</h4>
+  <p>{{description}}</p>
+  <h4>Star:</h4>
+  <div>{{starred.length}}</div>
+</div>
+<div class="tracks">
+    <h3>Tracks</h3>
+    {{view "project_tracks_view" tracks=tracks self=self record=record}}
+    <div class="record-button">
+      <div id="record"><img src="/assets/images/pages/record.png" width=200 height=200></img></div>
+      <div id="stop" class="none"><img src="/assets/images/pages/stop.png" width=200 height=200></img></div>
+    </div>
+</div>

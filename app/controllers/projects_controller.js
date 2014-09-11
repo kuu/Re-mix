@@ -15,5 +15,14 @@ module.exports = {
     this.app.fetch(spec, function(err, result) {
       callback(err, result);
     });
-  }
+  },
+
+  record: function(params, callback) {
+    var spec = {
+      model: {model: 'Project', params: params}
+    };
+    this.app.fetch(spec, function(err, result) {
+      callback(err, result);
+    });
+  },
 };
