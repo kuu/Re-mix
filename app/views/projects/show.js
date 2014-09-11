@@ -42,7 +42,9 @@ module.exports = BaseView.extend({
       originId: attrs.id,
       forkedBy: you
     }, function (data) {
+      var url = '/projects/' + you + '/' + attrs.id + '-from-' + attrs.owner;
       document.write(data);
+      history.pushState(null, 'Re:mix', url);
     });
   },
 
