@@ -3,7 +3,8 @@ var db = require('config').db,
     _ = require('underscore'),
     debug = require('debug')('rendr:MongodbAdapter'),
     util = require('util'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    fs = require('fs');
 
 module.exports.initDB = initDB;
 module.exports.MongodbAdapter = MongodbAdapter;
@@ -132,6 +133,28 @@ function fork(Project, criteria, callback) {
         contributors: body.contributors
       });
       doc.save(function (err) {
+        var prefix = './public/assets/';
+        var srcDir = '/projects/' + originOwner + '/';
+        var dstDir = '/projects/' + newOwner + '/';
+        var srcImage = prefix + 'images' + srcDir + originId + '-l.png';
+        var srcMedia = prefix + 'media' + srcDir + originId + '.mp3';
+        var dstImageDir = prefix + 'images' + dstDir;
+        var dstImageFile = dstImageDir + newId + '-l.png';
+        var dstMediaDir = prefix + 'media' + dstDir;
+        var dstMediaFile = dstMediaDir + newId + '.mp3';
+
+        if (fs.existsSync(srcImage)) {
+          if (!fs.existsSync(dstImageDir)) {
+            fs.mkdirSync(dstImageDir);
+          }
+          fs.writeFileSync(dstImageFile, fs.readFileSync(srcImage));
+        }
+        if (fs.existsSync(srcMedia)) {
+          if (!fs.existsSync(dstMediaDir)) {
+            fs.mkdirSync(dstMediaDir);
+          }
+          fs.writeFileSync(dstMediaFile, fs.readFileSync(srcMedia));
+        }
         callback(err);
       });
     }
