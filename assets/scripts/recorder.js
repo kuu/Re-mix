@@ -8,7 +8,7 @@ var scriptProcessorNode;
 
   var WORKER_PATH = '/assets/scripts/';
 
-  function Recorder(source, callback) {
+  function Recorder(source, params, callback) {
     var context = source.context;
     scriptProcessorNode = context.createScriptProcessor(4096, 1, 1);
     worker = new Worker(WORKER_PATH + 'recorderWorker.js');
@@ -17,8 +17,11 @@ var scriptProcessorNode;
 
     worker.postMessage({
       command: 'init',
-      config: {
-        sampleRate: context.sampleRate
+      params: {
+        user: params,
+        config: {
+          sampleRate: context.sampleRate
+        }
       }
     });
 

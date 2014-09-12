@@ -82,7 +82,9 @@ module.exports = BaseView.extend({
         mediaStreamSource = ctx.createMediaStreamSource(stream),
         recordingVolume = document.getElementById('recordingVolume'),
         monitorVolume = document.getElementById('monitorVolume'),
-        recordButton = document.getElementsByClassName('record-button')[0];
+        recordButton = document.getElementsByClassName('record-button')[0],
+        attrs = this.model.attributes,
+        router = this.app.router;
 
     // Build volume knob
     recordingVolume.addEventListener('change', function () {
@@ -123,8 +125,13 @@ module.exports = BaseView.extend({
 
     inputStream.connect(monitorGain);
 
-    recorder = this.recorder = new Recorder(recorderGain, function (obj) {
-      console.log(obj);
+    recorder = this.recorder = new Recorder(
+      recorderGain,
+      { owner: attrs.owner, id: attrs.id },
+      function (obj) {
+        // Update the view.
+        console.log(obj);
+        router.navigate('/record/' + attrs.owner + '/' + attrs.id, {trigger: true});
     });
 
     recordButton.disabled = false;
@@ -164,6 +171,7 @@ module.exports = BaseView.extend({
 
     if (tRecorder) {
       tRecorder.stop();
+      tRecorder.save();
     }
     tRecordButton.classList.remove('none');
     tStopButton.classList.add('none');

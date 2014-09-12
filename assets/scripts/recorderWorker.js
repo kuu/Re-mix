@@ -5,7 +5,7 @@ importScripts('/socket.io/socket.io.js');
 this.onmessage = function (e) {
   var command = e.data.command;
   if (command === 'init') {
-    init(e.data.config);
+    init(e.data.params);
   } else if (command === 'start') {
     start();
   } else if (command === 'record') {
@@ -17,12 +17,12 @@ this.onmessage = function (e) {
   }
 };
 
-function init(config) {
+function init(params) {
   var tSelf = this;
 
   socket = io();
-  socket.emit('metadata', {
-    sampleRate:config.sampleRate 
+  socket.emit('params', {
+    data: params
   });
   socket.on('server', function (message) {
     tSelf.postMessage(message);

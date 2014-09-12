@@ -2,9 +2,13 @@ var express = require('express'),
     rendr = require('rendr'),
     config = require('config'),
     app = express(),
+    fs = require('fs'),
     mw = require('./server/middleware'),
     mongo = require('./data/mongodb_adapter'),
-    dbMapper = require('./data/db_mapper');
+    dbMapper = require('./data/db_mapper'),
+    TRACK_DIR = './public/assets/media/tracks';
+
+require('date-utils');
 
 /**
  * Initialize Express middleware stack.
@@ -68,6 +72,7 @@ server.configure(function(rendrExpressApp) {
    * Increment a counter in the session on every page hit.
    */
   rendrExpressApp.use(mw.incrementCounter());
+
   rendrExpressApp.use(function (req, res, next) {
     next();
   });
@@ -78,12 +83,13 @@ server.configure(function(rendrExpressApp) {
  */
 function start(){
   var port = process.env.PORT || config.server.port;
-  app.listen(port);
+  var server = app.listen(port);
   console.log("server pid %s listening on port %s in %s mode",
     process.pid,
     port,
     app.get('env')
   );
+  return server;
 }
 
 
@@ -92,8 +98,94 @@ function start(){
  * This makes it easier to run integration tests on ephemeral ports.
  */
 if (require.main === module) {
+
   mongo.initDB();
-  start();
+
+  var http = start(),
+      io = require('socket.io')(http);
+
+  io.on('connection', function (socket) {
+    var params, buffer;
+
+    console.log('a user connected');
+
+    socket.on('disconnect', function () {
+      console.log('user disconnected');
+    });
+
+    socket.on('params', function (msg) {
+      params = msg.data;
+      console.log('\tparams:', params);
+    });
+
+    socket.on('start', function () {
+      console.log('\tstart');
+      buffer = new Buffer(0);
+    });
+
+    socket.on('record', function (msg) {
+      var buf = msg.data;
+      buffer = Buffer.concat([buffer, buf]);
+      //console.log(buffer.length);
+    });
+
+    socket.on('flush', function (msg) {
+
+      console.log("Received 'flush' message");
+
+      var wavFile = Buffer.concat([createWaveHeader(params.config.sampleRate, buffer.length), buffer]);
+          date = new Date(),
+          yyyy = date.toFormat("YYYY"),
+          mm = date.toFormat("MM"),
+          dt = date.toFormat("YYYYMMDDHH24MISS"),
+          userDir = TRACK_DIR + '/' + params.user.owner,
+          userYearDir = userDir + '/' + yyyy,
+          userMonthDir = userYearDir + '/' + mm,
+          dirCheckList = [userDir, userYearDir, userMonthDir],
+          fileName = dt + '.wav',
+          filePath = userMonthDir + '/' + fileName;
+
+      // Make sure that the directory exists.
+      for (var i = 0, il = dirCheckList.length; i < il; i++) {
+        var dir = dirCheckList[i];
+
+        if (!fs.existsSync(dir)) {
+          console.log('\tmkdir', dir);
+          fs.mkdirSync(dir);
+        }
+      }
+
+      console.log('\twriting: ', filePath);
+
+      // Saving data as a file.
+      fs.writeFile(filePath, wavFile, null, function (err) {
+        if (err) {
+          console.error('An error occured in writing buffer');
+        } else {
+          // Storing the new track into the DB.
+          /*
+          var options = {
+            id: dt, 
+            owner, params.owner,
+            organization : params.organization,
+            type: 'audio',
+            path: fileName
+          };
+
+          console.log("The file was saved as ", fileName);
+
+          dbAdapter.request(null, {path: '/tracks/add'}, options, function (err) {
+            if (!err) {
+              res.redirect('/record/' + params.owner + '/' + params.id);
+            }
+          });
+          //buffer.length = 0;
+          */
+          io.emit('server', {message: 'updateList'});
+        }
+      });
+    });
+  });
 }
 
 // Dummy login (everybody can log in.)
@@ -133,5 +225,38 @@ app.post('/removeTrackFromProject', function (req, res) {
     }
   });
 });
+
+function createWaveHeader(sampleRate, bufferLength){
+  var header = new Buffer(44);
+
+  /* RIFF identifier */
+  header.write('RIFF', 0);
+  /* file length */
+  header.writeUInt32LE(32 + bufferLength, 4);
+  /* RIFF type */
+  header.write('WAVE', 8);
+  /* format chunk identifier */
+  header.write('fmt ', 12);
+  /* format chunk length */
+  header.writeUInt32LE(16, 16);
+  /* sample format (raw) */
+  header.writeUInt16LE(1, 20);
+  /* channel count */
+  header.writeUInt16LE(1, 22);
+  /* sample rate */
+  header.writeUInt32LE(sampleRate, 24);
+  /* byte rate (sample rate * block align) */
+  header.writeUInt32LE(sampleRate * 4, 28);
+  /* block align (channel count * bytes per sample) */
+  header.writeUInt16LE(4, 32);
+  /* bits per sample */
+  header.writeUInt16LE(16, 34);
+  /* data chunk identifier */
+  header.write('data', 36);
+  /* data chunk length */
+  header.writeUInt32LE(bufferLength, 40);
+
+  return header;
+}
 
 exports.app = app;

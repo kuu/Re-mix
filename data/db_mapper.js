@@ -40,8 +40,13 @@ module.exports = function (path, options, callback) {
 
     case 'tracks':
       if (a.length === 3) {
-        callback(err, get, TrackModel, { 'owner.login': a[2], 'name': a[3] });
-        return;
+        if (a[2] === 'add') {
+          callback(err, get, TrackModel, options);
+          return;
+        } else {
+          callback(err, get, TrackModel, { 'owner.login': a[2], 'name': a[3] });
+          return;
+        }
       }
       break;
 
