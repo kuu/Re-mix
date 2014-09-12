@@ -112,13 +112,23 @@ gulp.task('jsonlint', function () {
 });
 
 gulp.task('jshint', function () {
-    return gulp.src(['app/**/[!compiled]*.js', 'data/**/*.js'])
+    return gulp.src(['app/**/[!compiled]*.js', 'data/**/*.js', 'assets/scripts/**/*.js'])
         .pipe($.jshint('.jshintrc'))
         .pipe($.jshint.reporter('default'))
         .pipe($.size());
 });
 
 gulp.task('lint', [ 'jsonlint', 'jshint' ]);
+
+//------------------------------------------------
+// SEPARATE SCRIPTS
+//------------------------------------------------
+
+gulp.task('scripts', function () {
+    return gulp.src('assets/scripts/**/*')
+        .pipe(gulp.dest('public/assets/scripts'))
+        .pipe($.size());
+});
 
 //------------------------------------------------
 // IMAGES
@@ -158,7 +168,7 @@ gulp.task('compile', function () {
     $.runSequence(['lint', 'handlebars', 'browserify']);
 });
 
-gulp.task('build', [ 'compile', 'stylus', 'images', 'media' ]);
+gulp.task('build', [ 'compile', 'stylus', 'images', 'media', 'scripts' ]);
 
 gulp.task('debug', function () {
     $.runSequence('clean', 'build', 'runDebugNode');

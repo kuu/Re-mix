@@ -1,3 +1,4 @@
+<script src="/assets/scripts/recorder.js"></script>
 <div class="cover-art">
   <div><img src="/assets/images/projects/{{owner}}/{{id}}-l.png" width=200 height=200></img></div>
 </div>
@@ -17,8 +18,17 @@
 <div class="tracks">
     <h3>Tracks</h3>
     {{view "project_tracks_view" tracks=tracks self=self record=record}}
-    <div class="record-button">
-      <div id="record"><img src="/assets/images/pages/record.png" width=200 height=200></img></div>
-      <div id="stop" class="none"><img src="/assets/images/pages/stop.png" width=200 height=200></img></div>
+    <div class="recording">
+      <div class="media-input">
+        <label>Audio input:<select id="microphones" size="1">
+          <option value="default" selected>Choose audio input.</option>
+        </select></label>
+        <div><label>Volume (Recording): <input type="range" id="recordingVolume"></label></div>
+        <div><label>Volume (Monitor): <input type="range" id="monitorVolume"></label></div>
+      </div>
+      <div class="record-button" disabled>
+        <div id="record"><img src="/assets/images/pages/record.png" width=200 height=200></img></div>
+        <div id="stop" class="none"><img src="/assets/images/pages/stop.png" width=200 height=200></img></div>
+      </div>
     </div>
 </div>
