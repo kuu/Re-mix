@@ -156,7 +156,7 @@ function remix(owner, id, tracks, callback) {
 
   for (var i = 0, il = tracks.length; i < il; i++) {
     track = tracks[i].id;
-    path = TRACK_DIR + '/' + track.substring(0, 4) + '/' + track.substring(4, 6) + '/' + track.id + '.wav';
+    path = TRACK_DIR + '/' + track.substring(0, 4) + '/' + track.substring(4, 6) + '/' + track + '.wav';
     pathList.push(path);
   }
   pathList.unshift('-m');
@@ -167,12 +167,7 @@ function remix(owner, id, tracks, callback) {
   console.log('Executing SoX with args: ' + pathList);
   sox.on('close', function(err) {
     console.log('child process exited with code ' + err);
-    if (err) {
-      console.log('Succeeded to execute sox.');
-    } else {
-      console.log('Failed to execute sox.');
-    }
-    callback(err);
+    callback(0);
   });
 }
 
