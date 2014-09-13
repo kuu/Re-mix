@@ -131,7 +131,7 @@ module.exports = BaseView.extend({
       function (obj) {
         // Update the view.
         console.log(obj);
-        router.navigate('/record/' + attrs.owner + '/' + attrs.id, {trigger: true});
+        router.navigate('/projects/' + attrs.owner + '/' + attrs.id, {trigger: true});
     });
 
     recordButton.disabled = false;

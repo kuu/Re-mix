@@ -162,26 +162,39 @@ if (require.main === module) {
         if (err) {
           console.error('An error occured in writing buffer');
         } else {
-          // Storing the new track into the DB.
-          /*
-          var options = {
-            id: dt, 
-            owner, params.owner,
-            organization : params.organization,
-            type: 'audio',
-            path: fileName
-          };
-
           console.log("The file was saved as ", fileName);
 
-          dbAdapter.request(null, {path: '/tracks/add'}, options, function (err) {
+          var id  = params.user.id,
+              owner = params.user.owner,
+              label = params.user.label;
+
+          // Add a track to the project.
+          var trackInProject = {
+            id: id,
+            type: 'audio',
+            owner: owner,
+            label: label,
+            enabled: true
+          };
+
+          var track = {
+            id: dt,
+            owner: owner,
+            type: 'audio',
+            original_proj: { owner: owner, proj: id },
+            reference: []
+          };
+
+          // Insert track
+          dbAdapter.request(null, { path: '/tracks/add' }, track, function (err) {
             if (!err) {
-              res.redirect('/record/' + params.owner + '/' + params.id);
+              dbAdapter.request(null, { path: '/projects/addTrack/' + owner + '/' + id }, trackInProject, function (err) {
+                io.emit('server', {message: 'updateList'});
+              });
             }
           });
-          //buffer.length = 0;
-          */
-          io.emit('server', {message: 'updateList'});
+
+          buffer.length = 0;
         }
       });
     });

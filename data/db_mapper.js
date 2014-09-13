@@ -3,6 +3,8 @@ var UserModel = require('./user_dao'),
     TrackModel = require('./track_dao'),
     get = require('./mongodb_adapter').get,
     fork = require('./mongodb_adapter').fork,
+    add = require('./mongodb_adapter').add,
+    addTrackToProject = require('./mongodb_adapter').addTrackToProject,
     removeTrackFromProject = require('./mongodb_adapter').removeTrackFromProject,
     query = require('./mongodb_adapter').query;
 
@@ -35,13 +37,18 @@ module.exports = function (path, options, callback) {
       if (a.length === 4) {
         callback(err, get, ProjectModel, { 'owner': a[2], 'id': a[3] });
         return;
+      } else if (a.length === 5) {
+        if (a[2] === 'addTrack') {
+          callback(err, addTrackToProject, ProjectModel, { 'owner': a[3], 'id': a[4], 'track': options});
+          return;
+        }
       }
       break;
 
     case 'tracks':
       if (a.length === 3) {
         if (a[2] === 'add') {
-          callback(err, get, TrackModel, options);
+          callback(err, add, TrackModel, options);
           return;
         } else {
           callback(err, get, TrackModel, { 'owner.login': a[2], 'name': a[3] });

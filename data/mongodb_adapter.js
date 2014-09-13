@@ -9,6 +9,8 @@ var db = require('config').db,
 module.exports.initDB = initDB;
 module.exports.MongodbAdapter = MongodbAdapter;
 module.exports.get = get;
+module.exports.add = add;
+module.exports.addTrackToProject = addTrackToProject;
 module.exports.fork = fork;
 module.exports.removeTrackFromProject = removeTrackFromProject;
 module.exports.query = query;
@@ -107,6 +109,25 @@ MongodbAdapter.prototype.request = function(req, api, options, callback) {
 function get(Model, criteria, callback) {
   Model.findOne(criteria).exec(function(err, body) {
     callback(err, body);
+  });
+}
+
+function add(Model, criteria, callback) {
+  var doc = new Model(criteria);
+  doc.save(function (err) {
+    callback(err);
+  });
+}
+
+function addTrackToProject(Model, criteria, callback) {
+  Model.findOne({owner: criteria.owner, id: criteria.id})
+  .exec(function(err, doc) {
+    if (!err) {
+      doc.tracks.push(criteria.track);
+      doc.save(function (err) {
+        callback(err);
+      });
+    }
   });
 }
 
