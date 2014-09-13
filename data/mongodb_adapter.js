@@ -4,7 +4,9 @@ var db = require('config').db,
     debug = require('debug')('rendr:MongodbAdapter'),
     util = require('util'),
     mongoose = require('mongoose'),
-    fs = require('fs');
+    fs = require('fs'),
+    TRACK_DIR = './public/assets/media/tracks',
+    MIX_DIR = './public/assets/media/projects';
 
 module.exports.initDB = initDB;
 module.exports.MongodbAdapter = MongodbAdapter;
@@ -122,10 +124,16 @@ function add(Model, criteria, callback) {
 function addTrackToProject(Model, criteria, callback) {
   Model.findOne({owner: criteria.owner, id: criteria.id})
   .exec(function(err, doc) {
+    var tracks;
     if (!err) {
-      doc.tracks.push(criteria.track);
+      tracks = doc.tracks;
+      tracks.push(criteria.track);
+
+      // Update db
       doc.save(function (err) {
-        callback(err);
+        if (!err) {
+          remix(criteria.owner, criteria.id, tracks, callback);
+        }
       });
     }
   });
@@ -133,10 +141,38 @@ function addTrackToProject(Model, criteria, callback) {
 
 function removeTrackFromProject(Project, criteria, callback) {
   Project.findOne({id: criteria.id, owner: criteria.owner}).exec(function(err, doc) {
-    doc.tracks.splice(criteria.track, 1);
+    var tracks = doc.tracks;
+    tracks.splice(criteria.track, 1);
     doc.save(function (err) {
-      callback(err);
+      if (!err) {
+        remix(criteria.owner, criteria.id, tracks, callback);
+      }
     });
+  });
+}
+
+function remix(owner, id, tracks, callback) {
+  var track, path, pathList = [], spawn, sox;
+
+  for (var i = 0, il = tracks.length; i < il; i++) {
+    track = tracks[i].id;
+    path = TRACK_DIR + '/' + track.substring(0, 4) + '/' + track.substring(4, 6) + '/' + track.id + '.wav';
+    pathList.push(path);
+  }
+  pathList.unshift('-m');
+  pathList.push(MIX_DIR + '/' + owner + '/' + id + '.mp3');
+
+  spawn = require('child_process').spawn;
+  sox = spawn('sox', pathList);
+  console.log('Executing SoX with args: ' + pathList);
+  sox.on('close', function(err) {
+    console.log('child process exited with code ' + err);
+    if (err) {
+      console.log('Succeeded to execute sox.');
+    } else {
+      console.log('Failed to execute sox.');
+    }
+    callback(err);
   });
 }
 

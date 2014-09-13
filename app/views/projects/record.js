@@ -12,13 +12,13 @@ module.exports = BaseView.extend({
   initialize: function () {
     this.audioContext = null;
     this.recorder = null;
+    this.recording = false;
     this.recorderGain = null;
     this.inputStream = null;
   },
 
   events: {
-    'click #record' : 'onRecord',
-    'click #stop' : 'onStop'
+    'click .record-button' : 'onRecord',
   },
 
   postRender: function () {
@@ -77,6 +77,7 @@ module.exports = BaseView.extend({
     var ctx = this.audioContext,
         recorder = this.recorder,
         recorderGain = this.recorderGain,
+        analyser = this.analyser,
         monitorGain = this.monitorGain,
         inputStream = this.inputStream,
         mediaStreamSource = ctx.createMediaStreamSource(stream),
@@ -104,6 +105,11 @@ module.exports = BaseView.extend({
       recorderGain = this.recorderGain = ctx.createGain();
       recorderGain.gain.value = 0.5;
       recordingVolume.value = 50;
+    }
+
+    if (!analyser) {
+      analyser = this.analyser = ctx.createAnalyser();
+      recorderGain.connect(analyser);
     }
 
     if (!monitorGain) {
@@ -139,6 +145,30 @@ module.exports = BaseView.extend({
     console.log('Recorder set up.');
   },
 
+  drawWave: function (waveData) {
+    var ctx = this.waveCanvasContext,
+        h = ctx.canvas.height,
+        w = ctx.canvas.width,
+        posY = h / 2;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.beginPath();
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle='#f66';
+    ctx.lineWidth = 7;
+
+    for (var i = 0; i < w ; i++) {
+      /* convert uint8(0-255) to -128 - +127*/
+      var amp = waveData[i] - 128;
+      if (i === 0) {
+        ctx.moveTo(i*2, posY + amp);
+      } else {
+        ctx.lineTo(i*2, posY + amp);
+      }
+    }
+    ctx.stroke();
+  },
+
   convertToMono: function (input) {
     // make sure the source is mono - some sources will be left-side only
     var ctx = this.audioContext;
@@ -154,27 +184,50 @@ module.exports = BaseView.extend({
   onRecord: function () {
     var tRecordButton = document.getElementById('record'),
         tStopButton = document.getElementById('stop'),
-        tRecorder = this.recorder;
+        tRecorder = this.recorder,
+        tIsRecording = this.recording,
+        tCanvasContext = this.waveCanvasContext,
+        tSelf = this;
 
-    if (tRecorder) {
-      tRecorder.record();
+    if (tIsRecording) {
+      // Stop
+      if (tRecorder) {
+        tRecorder.stop();
+        tRecorder.save();
+      }
+      tRecordButton.classList.remove('none');
+      tStopButton.classList.add('none');
+      this.recording = false;
+      console.log('Stopped.');
+    } else {
+
+      if (!tCanvasContext) {
+        this.waveCanvasContext = document.getElementById('waveCanvas').getContext('2d');
+      }
+
+      if (tRecorder) {
+        tRecorder.record();
+      }
+      tRecordButton.classList.add('none');
+      tStopButton.classList.remove('none');
+      this.recording = true;
+
+      (function loop() {
+
+        if (!tSelf.recording) {
+          return;
+        }
+
+        var analyser = tSelf.analyser,
+            waveData = new Uint8Array(analyser.frequencyBinCount);
+
+        analyser.getByteTimeDomainData(waveData);
+        tSelf.drawWave(waveData);
+        requestAnimationFrame(loop);
+      }());
+
+      console.log('Recording...');
     }
-    tRecordButton.classList.add('none');
-    tStopButton.classList.remove('none');
-    console.log('Recording...');
-  },
-
-  onStop: function () {
-    var tRecordButton = document.getElementById('record'),
-        tStopButton = document.getElementById('stop'),
-        tRecorder = this.recorder;
-
-    if (tRecorder) {
-      tRecorder.stop();
-      tRecorder.save();
-    }
-    tRecordButton.classList.remove('none');
-    tStopButton.classList.add('none');
   },
 
 });
